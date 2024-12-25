@@ -1,0 +1,19 @@
+# Node.js projects
+node_modules/
+.env
+
+# Python projects
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs and debug files
+*.log
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db

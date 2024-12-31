@@ -1,9 +1,4 @@
 
-**Project Name
-**E-commerce Store
-
-**Installation
-**Prerequisites
 Before running the project, ensure that you have the following installed:
 Node.js
 npm or Yarn

@@ -11,6 +11,7 @@ const Product = () => {
   const [image, setImage] = useState('');
   
   // Review state
+  const [reviews, setReviews] = useState([]); // Reviews for the product  
   const [rating, setRating] = useState(0);  // Rating from 1 to 5
   const [comment, setComment] = useState(''); // Review comment
   const [isReviewSubmitted, setIsReviewSubmitted] = useState(false); // Success flag for submission
@@ -30,6 +31,9 @@ const Product = () => {
     if (topElement) {
       topElement.scrollIntoView({ behavior: 'smooth' });
     }
+    const savedReviews = JSON.parse(localStorage.getItem('reviews')) || {};
+    const productReviews = savedReviews[productId] || [];
+    setReviews(productReviews);
   }, [productId]);
 
   useEffect(() => {
@@ -49,6 +53,14 @@ const Product = () => {
       alert("Please provide a rating and a comment.");
       return;
     }
+
+ // Save the review to local storage
+ const savedReviews = JSON.parse(localStorage.getItem('reviews')) || {};
+ const productReviews = savedReviews[productId] || [];
+ const newReview = { rating, comment, date: new Date().toLocaleDateString() };
+ productReviews.push(newReview);
+ savedReviews[productId] = productReviews;
+ localStorage.setItem('reviews', JSON.stringify(savedReviews));
 
     // Simulate review submission (you can replace it with actual API call)
     setTimeout(() => {
@@ -84,7 +96,7 @@ const Product = () => {
             <img src={assets.star_icon} alt="" className='w-3 5' />
             <img src={assets.star_icon} alt="" className='w-3 5' />
             <img src={assets.star_dull_icon} alt="" className='w-3 5' />
-            <p className='pl-2'>(122)</p>
+            <p className='pl-2'>({reviews.length})</p>
          </div>
           <p className="mt-5 text-3xl font-medium">{currency}{productData.price}</p>
           <p className="mt-5 text-gray-500 md:w-4/5">{productData.description}</p>
@@ -95,10 +107,18 @@ const Product = () => {
       {/* Review Section */}
       <div className="mt-20">
         <div className="flex">
-          <p className="border px-5 py-3 text-sm">Reviews ({productData.reviews?.length || 0})</p>
+          <p className="border px-5 py-3 text-sm">Reviews ({reviews.length})</p>
         </div>
 
         <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
+           {/* Display Reviews */}
+           {reviews.map((review, index) => (
+            <div key={index} className="mb-4">
+              <p className="font-bold">Rating: {review.rating}/5</p>
+              <p>{review.comment}</p>
+              <p className="text-xs text-gray-400">Reviewed on: {review.date}</p>
+            </div>
+          ))}
           {/* Review Form */}
         <h3 className="text-lg font-bold mb-4 text-[#FAFAFA]">Submit a Review</h3>
         <form onSubmit={handleSubmitReview}>

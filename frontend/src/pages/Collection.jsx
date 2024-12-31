@@ -9,7 +9,7 @@ const Collection = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [filterProducts,setFilterProducts] = useState([]);
   const [category,setCategory] = useState([]);
-  const [subCategory,setSubCategory] = useState([]);
+  // const [subCategory,setSubCategory] = useState([]);
   const [sortType,setSortType] = useState('relevant');
 
   const toggleCategory = (e) => {
@@ -20,13 +20,13 @@ const Collection = () => {
     }
   }
 
-  const toggleSubCategory = (e) => {
-    if(subCategory.includes(e.target.value)){
-      setSubCategory(prev => prev.filter(item => item !== e.target.value));
-    }else{
-      setSubCategory(prev => [...prev,e.target.value]);
-    }
-  }
+  // const toggleSubCategory = (e) => {
+  //   if(subCategory.includes(e.target.value)){
+  //     setSubCategory(prev => prev.filter(item => item !== e.target.value));
+  //   }else{
+  //     setSubCategory(prev => [...prev,e.target.value]);
+  //   }
+  // }
  
   const applyFilter = () => {
     let productsCopy = products.slice();
@@ -37,9 +37,9 @@ const Collection = () => {
     if(category.length > 0){
       productsCopy = productsCopy.filter(item => category.includes(item.category));
     }
-    if(subCategory.length > 0){
-      productsCopy = productsCopy.filter(item => subCategory.includes(item.subCategory));
-    }
+    // if(subCategory.length > 0){
+    //   productsCopy = productsCopy.filter(item => subCategory.includes(item.subCategory));
+    // }
     setFilterProducts(productsCopy);
   }
 
@@ -62,7 +62,7 @@ const sortProduct = () => {
 
   useEffect(() => {
     applyFilter();
-  },[category,subCategory,search,showSearch,products])
+  },[category,search,showSearch,products])
 
   useEffect(() => {
     sortProduct();
@@ -88,10 +88,13 @@ const sortProduct = () => {
       <p className='flex gap-2'>
         <input className='w-3' type="checkbox" value={'Sony'} onChange={toggleCategory}/>Sony
       </p>
+      <p className='flex gap-2'>
+        <input className='w-3' type="checkbox" value={'Audionic'} onChange={toggleCategory}/>Audionic
+      </p>
     </div>
   </div>
   {/* SUBCATEGORY Filter */}
-  <div className={`pl-5 py-3 my-5 ${showFilters ? 'block' : 'hidden sm:block'}`}>
+  {/* <div className={`pl-5 py-3 my-5 ${showFilters ? 'block' : 'hidden sm:block'}`}>
     <p className='mb-3 text-sm font-medium'>TYPE</p>
     <div className='flex flex-col gap-2 text-sm font-light text-[#FAFAFA]'>
       <p className='flex gap-2'>
@@ -107,7 +110,7 @@ const sortProduct = () => {
         <input className='w-3' type="checkbox" value={'Neckbands'} onChange={toggleSubCategory}/>Neckbands
       </p>
     </div>
-  </div>
+  </div> */}
 </div>
 
 {/* Right Side  */}
@@ -125,13 +128,22 @@ const sortProduct = () => {
 
     {/* Map Products */}
     <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
-    {
-      filterProducts.map((item,index) =>(
-        <ProductItem key={index} id={item._id} name={item.name} image={item.image} price={item.price}/>
-      ))
-    }
-
-    </div>
+    {filterProducts.length > 0 ? (
+        filterProducts.map((item, index) => (
+            <ProductItem 
+                key={index} 
+                id={item._id} 
+                name={item.name} 
+                image={item.image} 
+                price={item.price} 
+            />
+        ))
+    ) : (
+        <div className="text-center text-[#FAFAFA] col-span-full">
+            <p>No products found.</p>
+        </div>
+    )}
+</div>
 
 </div>
     </div>

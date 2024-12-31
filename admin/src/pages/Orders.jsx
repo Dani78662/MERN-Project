@@ -7,6 +7,9 @@ import { assets } from "../assets/assets";
 
 const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
+  const [cancellationReason, setCancellationReason] = useState("");
+  const [showReasonInput, setShowReasonInput] = useState(null); // Track which order needs the textarea
+
   const fetchAllOrders = async () => {
     if (!token) {
       return null;
@@ -29,6 +32,14 @@ const Orders = ({ token }) => {
   };
 
   const statusHandler = async(event, orderId) => {
+    const status = event.target.value;
+
+    // Show the textarea if the status is "Cancelled"
+    if (status === "Cancelled") {
+      setShowReasonInput(orderId);
+      return;
+    }
+        // If status is not "Cancelled," proceed with the API call
     try {
       const response = await axios.post(backendUrl + '/api/order/status',{orderId, status: event.target.value},{headers: {token}});
       if (response.data.success) {
@@ -40,6 +51,32 @@ const Orders = ({ token }) => {
       toast.error(errorMessage);
     }
   }
+
+  const handleCancellation = async (orderId) => {
+    if (!cancellationReason.trim()) {
+      toast.error("Cancellation reason is required.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        backendUrl + "/api/order/status",
+        { orderId, status: "Cancelled", reason: cancellationReason },
+        { headers: { token } }
+      );
+      if (response.data.success) {
+        setShowReasonInput(null);
+        setCancellationReason("");
+        await fetchAllOrders();
+      }
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error.response
+        ? error.response.data.message
+        : error.message;
+      toast.error(errorMessage);
+    }
+  };
 
   useEffect(() => {
     fetchAllOrders();
@@ -98,7 +135,25 @@ const Orders = ({ token }) => {
               <option value="Shipped">Shipped</option>
               <option value="Out for Delivery">Out for Delivery</option>
               <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
             </select>
+            {showReasonInput === order._id && (
+              <div className="mt-3">
+                <textarea
+                  className="w-full p-2 border-2 rounded-md"
+                  rows={5}
+                  placeholder="Enter cancellation reason"
+                  value={cancellationReason}
+                  onChange={(e) => setCancellationReason(e.target.value)}
+                />
+                <button
+                  className="mt-2 p-2 bg-red-500 text-white rounded-md"
+                  onClick={() => handleCancellation(order._id)}
+                >
+                  Submit Reason
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

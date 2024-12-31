@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 import razorpay from 'razorpay';
 
 // global variables
-const currency = 'PKR';
+const currency = 'USD';
 const deliveryCharge = 10;
 
 // gateway for payment

@@ -68,8 +68,18 @@ const Cart = () => {
         <div className='w-full sm:w-[450px] '>
         <CartTotal/>
         <div className='w-full text-end'>
-        <button onClick={() => navigate('/place-order')} className='bg-[#1D4ED8] text-white text-sm my-8 px-8 py-3 hover:bg-[#3b82f6]'>PROCEED TO CHECKOUT</button>
-        </div>
+        <button 
+        onClick={() => {
+            if (cartData.length > 0) {
+                navigate('/place-order');
+            } else {
+                alert('Your cart is empty! Please add some products to proceed.');
+            }
+        }} 
+        className='bg-[#1D4ED8] text-white text-sm my-8 px-8 py-3 hover:bg-[#3b82f6]'
+    >
+        PROCEED TO PAYMENT
+    </button>        </div>
         </div>
       </div>
 
